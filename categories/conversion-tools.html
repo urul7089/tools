@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion Tools - Free Online Conversion Utilities | Multi-Tools</title>
+    <meta name="description" content="Free online conversion tools including unit converters, format converters, and more. Essential utilities for converting between different units and formats.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .category-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .tool-card {
+            height: 100%;
+        }
+        .tool-card .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .tool-card .btn {
+            margin-top: auto;
+        }
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .category-description {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tool-tags {
+            margin-top: 0.5rem;
+        }
+        .tool-tag {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            background-color: var(--light-color);
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Category Header -->
+    <header class="category-header text-center">
+        <div class="container">
+            <i class="fas fa-exchange-alt tool-icon"></i>
+            <h1>Conversion Tools</h1>
+            <div class="category-description">
+                <p class="lead mb-0">Convert between different units, formats, and measurements with our collection of powerful conversion tools.</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-4">
+        <!-- Search Bar -->
+        <div class="row mb-4">
+            <div class="col-md-6 mx-auto">
+                <div class="input-group">
+                    <input type="text" id="toolSearch" class="form-control" placeholder="Search conversion tools...">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="tool-grid mb-4">
+            <!-- Unit Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-ruler-combined text-primary tool-icon"></i>
+                    <h3 class="h5">Unit Converter</h3>
+                    <p class="text-muted">Convert between different units of measurement.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Units</span>
+                        <span class="tool-tag">Measurement</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/unit-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Currency Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-money-bill-wave text-primary tool-icon"></i>
+                    <h3 class="h5">Currency Converter</h3>
+                    <p class="text-muted">Convert between different currencies with live exchange rates.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Currency</span>
+                        <span class="tool-tag">Money</span>
+                        <span class="tool-tag">Exchange</span>
+                    </div>
+                    <a href="/tools/currency-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Time Zone Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-clock text-primary tool-icon"></i>
+                    <h3 class="h5">Time Zone Converter</h3>
+                    <p class="text-muted">Convert times between different time zones worldwide.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Time</span>
+                        <span class="tool-tag">Zones</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/timezone-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Number Base Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-subscript text-primary tool-icon"></i>
+                    <h3 class="h5">Number Base Converter</h3>
+                    <p class="text-muted">Convert numbers between different number bases (binary, decimal, hex).</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Numbers</span>
+                        <span class="tool-tag">Base</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/number-base-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Color Code Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-palette text-primary tool-icon"></i>
+                    <h3 class="h5">Color Code Converter</h3>
+                    <p class="text-muted">Convert between different color formats (HEX, RGB, HSL).</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Color</span>
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/color-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Temperature Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-temperature-high text-primary tool-icon"></i>
+                    <h3 class="h5">Temperature Converter</h3>
+                    <p class="text-muted">Convert between Celsius, Fahrenheit, and Kelvin.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Temperature</span>
+                        <span class="tool-tag">Units</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/temperature-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Data Size Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-database text-primary tool-icon"></i>
+                    <h3 class="h5">Data Size Converter</h3>
+                    <p class="text-muted">Convert between different data size units (KB, MB, GB, etc.).</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Data</span>
+                        <span class="tool-tag">Size</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/data-size-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Speed Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-tachometer-alt text-primary tool-icon"></i>
+                    <h3 class="h5">Speed Converter</h3>
+                    <p class="text-muted">Convert between different speed units (mph, km/h, m/s).</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Speed</span>
+                        <span class="tool-tag">Units</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/speed-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // Category Page Specific JavaScript
+        const searchInput = document.getElementById('toolSearch');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tool-tag'))
+                    .map(tag => tag.textContent.toLowerCase());
+                
+                const matches = title.includes(searchTerm) || 
+                              description.includes(searchTerm) ||
+                              tags.some(tag => tag.includes(searchTerm));
+                
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

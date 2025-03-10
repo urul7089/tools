@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Tools - Free Online Data Utilities | Multi-Tools</title>
+    <meta name="description" content="Free online data tools including JSON formatter, CSV editor, data visualization tools, and more. Essential utilities for data analysis and manipulation.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .category-header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .tool-card {
+            height: 100%;
+        }
+        .tool-card .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .tool-card .btn {
+            margin-top: auto;
+        }
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .category-description {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tool-tags {
+            margin-top: 0.5rem;
+        }
+        .tool-tag {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            background-color: var(--light-color);
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Category Header -->
+    <header class="category-header text-center">
+        <div class="container">
+            <i class="fas fa-database tool-icon"></i>
+            <h1>Data Tools</h1>
+            <div class="category-description">
+                <p class="lead mb-0">Format, analyze, and visualize data with our collection of powerful data processing tools.</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-4">
+        <!-- Search Bar -->
+        <div class="row mb-4">
+            <div class="col-md-6 mx-auto">
+                <div class="input-group">
+                    <input type="text" id="toolSearch" class="form-control" placeholder="Search data tools...">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="tool-grid mb-4">
+            <!-- JSON Formatter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-code text-primary tool-icon"></i>
+                    <h3 class="h5">JSON Formatter</h3>
+                    <p class="text-muted">Format and validate JSON data with syntax highlighting.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">JSON</span>
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Validate</span>
+                    </div>
+                    <a href="/tools/json-formatter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CSV Editor -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-table text-primary tool-icon"></i>
+                    <h3 class="h5">CSV Editor</h3>
+                    <p class="text-muted">Edit, format, and convert CSV files with table view.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">CSV</span>
+                        <span class="tool-tag">Table</span>
+                        <span class="tool-tag">Edit</span>
+                    </div>
+                    <a href="/tools/csv-editor.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Data Visualizer -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-chart-bar text-primary tool-icon"></i>
+                    <h3 class="h5">Data Visualizer</h3>
+                    <p class="text-muted">Create charts and graphs from your data.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Charts</span>
+                        <span class="tool-tag">Graphs</span>
+                        <span class="tool-tag">Visualize</span>
+                    </div>
+                    <a href="/tools/data-visualizer.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- XML Formatter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-file-code text-primary tool-icon"></i>
+                    <h3 class="h5">XML Formatter</h3>
+                    <p class="text-muted">Format and validate XML data with syntax highlighting.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">XML</span>
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Validate</span>
+                    </div>
+                    <a href="/tools/xml-formatter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SQL Formatter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-database text-primary tool-icon"></i>
+                    <h3 class="h5">SQL Formatter</h3>
+                    <p class="text-muted">Format and beautify SQL queries with syntax highlighting.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">SQL</span>
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Query</span>
+                    </div>
+                    <a href="/tools/sql-formatter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Data Generator -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-random text-primary tool-icon"></i>
+                    <h3 class="h5">Data Generator</h3>
+                    <p class="text-muted">Generate sample data for testing and development.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Generate</span>
+                        <span class="tool-tag">Sample</span>
+                        <span class="tool-tag">Test</span>
+                    </div>
+                    <a href="/tools/data-generator.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Data Cleaner -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-broom text-primary tool-icon"></i>
+                    <h3 class="h5">Data Cleaner</h3>
+                    <p class="text-muted">Clean and normalize data by removing duplicates and errors.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Clean</span>
+                        <span class="tool-tag">Normalize</span>
+                        <span class="tool-tag">Fix</span>
+                    </div>
+                    <a href="/tools/data-cleaner.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Data Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-exchange-alt text-primary tool-icon"></i>
+                    <h3 class="h5">Data Converter</h3>
+                    <p class="text-muted">Convert between different data formats (JSON, XML, CSV, YAML).</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Convert</span>
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Transform</span>
+                    </div>
+                    <a href="/tools/data-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // Category Page Specific JavaScript
+        const searchInput = document.getElementById('toolSearch');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tool-tag'))
+                    .map(tag => tag.textContent.toLowerCase());
+                
+                const matches = title.includes(searchTerm) || 
+                              description.includes(searchTerm) ||
+                              tags.some(tag => tag.includes(searchTerm));
+                
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

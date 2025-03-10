@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Multi-Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #64748b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .logo {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-floating input {
+            border-radius: 0.5rem;
+        }
+
+        .form-floating label {
+            color: var(--secondary-color);
+        }
+
+        .btn-login {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            background: #2563eb;
+        }
+
+        .two-factor {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .two-factor.show {
+            display: block;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .security-info {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .security-info p {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-info i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Login Header -->
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>Admin Dashboard Login</h1>
+            <p>Enter your credentials to access the dashboard</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-floating">
+                <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                <label for="email">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                <label for="password">Password</label>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="rememberMe">
+                <label class="form-check-label" for="rememberMe">
+                    Remember me
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-login">
+                <i class="fas fa-sign-in-alt me-2"></i> Login
+            </button>
+            <div id="errorMessage" class="error-message">
+                Invalid email or password
+            </div>
+        </form>
+
+        <!-- Two-Factor Authentication -->
+        <div id="twoFactor" class="two-factor">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="twoFactorCode" placeholder="000000" maxlength="6" required>
+                <label for="twoFactorCode">Two-Factor Code</label>
+            </div>
+            <button onclick="verifyTwoFactor()" class="btn btn-primary btn-login">
+                <i class="fas fa-key me-2"></i> Verify Code
+            </button>
+        </div>
+
+        <!-- Security Info -->
+        <div class="security-info">
+            <p><i class="fas fa-lock"></i> Secured with 256-bit encryption</p>
+            <p><i class="fas fa-shield-alt"></i> Two-factor authentication enabled</p>
+            <p><i class="fas fa-history"></i> Session timeout after 30 minutes</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, rememberMe })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.requireTwoFactor) {
+                        // Show 2FA input
+                        document.getElementById('twoFactor').classList.add('show');
+                        document.getElementById('loginForm').style.display = 'none';
+                    } else {
+                        // Redirect to dashboard
+                        window.location.href = '/admin/dashboard.html';
+                    }
+                } else {
+                    showError(data.message || 'Invalid email or password');
+                }
+            } catch (error) {
+                showError('An error occurred. Please try again.');
+            }
+
+            return false;
+        }
+
+        async function verifyTwoFactor() {
+            const code = document.getElementById('twoFactorCode').value;
+
+            try {
+                const response = await fetch('/api/auth/verify-2fa', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/admin/dashboard.html';
+                } else {
+                    showError(data.message || 'Invalid verification code');
+                }
+            } catch (error) {
+                showError('An error occurred. Please try again.');
+            }
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+
+            setTimeout(() => {
+                errorElement.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /tools/
+Allow: /categories/
+Allow: /css/
+Allow: /js/
+Allow: /sitemap.xml
+
+# Prevent crawling of potential admin or system paths
+Disallow: /admin/
+Disallow: /system/
+Disallow: /temp/
+Disallow: /cache/
+
+# Sitemap location
+Sitemap: https://multi-tools.com/sitemap.xml 

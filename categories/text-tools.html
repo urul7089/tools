@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Tools - Free Online Text Utilities | Multi-Tools</title>
+    <meta name="description" content="Free online text tools including word counter, case converter, text formatter, and more. Essential utilities for writers, developers, and content creators.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .category-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .tool-card {
+            height: 100%;
+        }
+        .tool-card .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .tool-card .btn {
+            margin-top: auto;
+        }
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .category-description {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tool-tags {
+            margin-top: 0.5rem;
+        }
+        .tool-tag {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            background-color: var(--light-color);
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Category Header -->
+    <header class="category-header text-center">
+        <div class="container">
+            <i class="fas fa-font tool-icon"></i>
+            <h1>Text Tools</h1>
+            <div class="category-description">
+                <p class="lead mb-0">Transform, analyze, and manipulate text with our collection of powerful text processing tools.</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-4">
+        <!-- Search Bar -->
+        <div class="row mb-4">
+            <div class="col-md-6 mx-auto">
+                <div class="input-group">
+                    <input type="text" id="toolSearch" class="form-control" placeholder="Search text tools...">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="tool-grid mb-4">
+            <!-- Word Counter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-calculator text-primary tool-icon"></i>
+                    <h3 class="h5">Word Counter</h3>
+                    <p class="text-muted">Count words, characters, sentences, and paragraphs in your text.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Counter</span>
+                        <span class="tool-tag">Analysis</span>
+                        <span class="tool-tag">Statistics</span>
+                    </div>
+                    <a href="/tools/word-counter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Case Converter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-text-height text-primary tool-icon"></i>
+                    <h3 class="h5">Case Converter</h3>
+                    <p class="text-muted">Convert text between different cases: UPPER, lower, Title, camelCase, etc.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Case</span>
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/case-converter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Text Formatter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-align-left text-primary tool-icon"></i>
+                    <h3 class="h5">Text Formatter</h3>
+                    <p class="text-muted">Format and beautify text with proper spacing and alignment.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Format</span>
+                        <span class="tool-tag">Beautify</span>
+                        <span class="tool-tag">Clean</span>
+                    </div>
+                    <a href="/tools/text-formatter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Text Diff Checker -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-code-branch text-primary tool-icon"></i>
+                    <h3 class="h5">Text Diff Checker</h3>
+                    <p class="text-muted">Compare two texts and highlight the differences.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Compare</span>
+                        <span class="tool-tag">Diff</span>
+                        <span class="tool-tag">Analysis</span>
+                    </div>
+                    <a href="/tools/text-diff-checker.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Text Repeater -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-copy text-primary tool-icon"></i>
+                    <h3 class="h5">Text Repeater</h3>
+                    <p class="text-muted">Repeat text with custom separators and formatting options.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Repeat</span>
+                        <span class="tool-tag">Generate</span>
+                        <span class="tool-tag">Format</span>
+                    </div>
+                    <a href="/tools/text-repeater.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Lorem Ipsum Generator -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-paragraph text-primary tool-icon"></i>
+                    <h3 class="h5">Lorem Ipsum Generator</h3>
+                    <p class="text-muted">Generate placeholder text for design mockups.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Lorem</span>
+                        <span class="tool-tag">Generator</span>
+                        <span class="tool-tag">Placeholder</span>
+                    </div>
+                    <a href="/tools/lorem-ipsum-generator.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Text to Speech -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-volume-up text-primary tool-icon"></i>
+                    <h3 class="h5">Text to Speech</h3>
+                    <p class="text-muted">Convert text to natural-sounding speech.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Speech</span>
+                        <span class="tool-tag">Audio</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/text-to-speech.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- String Encoder/Decoder -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-key text-primary tool-icon"></i>
+                    <h3 class="h5">String Encoder/Decoder</h3>
+                    <p class="text-muted">Encode and decode text in various formats (URL, Base64, HTML).</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Encode</span>
+                        <span class="tool-tag">Decode</span>
+                        <span class="tool-tag">Convert</span>
+                    </div>
+                    <a href="/tools/string-encoder-decoder.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // Category Page Specific JavaScript
+        const searchInput = document.getElementById('toolSearch');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tool-tag'))
+                    .map(tag => tag.textContent.toLowerCase());
+                
+                const matches = title.includes(searchTerm) || 
+                              description.includes(searchTerm) ||
+                              tags.some(tag => tag.includes(searchTerm));
+                
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

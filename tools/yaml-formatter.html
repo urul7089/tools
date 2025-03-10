@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML Formatter - Format and Validate YAML | Multi-Tools</title>
+    <meta name="description" content="Free online YAML formatter and validator with syntax highlighting. Format, validate, and convert between YAML and JSON formats with schema validation.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        .tool-header {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .editor-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .editor-toolbar {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem;
+        }
+        .editor {
+            min-height: 400px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 1rem;
+            resize: vertical;
+            width: 100%;
+        }
+        .output {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .preview {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 400px;
+            overflow: auto;
+        }
+        .preview-container {
+            display: none;
+        }
+        .error-message {
+            color: #ef4444;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+        .btn-group .btn {
+            margin-right: 0.5rem;
+        }
+        .char-count {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        .format-options {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .indent-size {
+            width: auto;
+            display: inline-block;
+        }
+        .stats {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+        .validation-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        .validation-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        .schema-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .type-object { background-color: #dbeafe; color: #1e40af; }
+        .type-array { background-color: #fae8ff; color: #86198f; }
+        .type-string { background-color: #dcfce7; color: #166534; }
+        .type-number { background-color: #fff7ed; color: #9a3412; }
+        .type-boolean { background-color: #fef2f2; color: #991b1b; }
+        .type-null { background-color: #f3f4f6; color: #374151; }
+        .schema-editor {
+            display: none;
+            margin-top: 1rem;
+        }
+        .schema-editor.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Tool Header -->
+    <header class="tool-header">
+        <div class="container text-center">
+            <h1>YAML Formatter</h1>
+            <p class="lead">Format and validate your YAML with schema validation and JSON conversion</p>
+        </div>
+    </header>
+
+    <main class="container pb-4">
+        <!-- Format Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="format-options">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Indent Size</label>
+                            <select class="form-select indent-size" id="indentSize">
+                                <option value="2">2 spaces</option>
+                                <option value="4">4 spaces</option>
+                                <option value="tab">Tab</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Output Format</label>
+                            <select class="form-select" id="outputFormat">
+                                <option value="yaml">YAML</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Quote Style</label>
+                            <select class="form-select" id="quoteStyle">
+                                <option value="single">Single Quotes</option>
+                                <option value="double">Double Quotes</option>
+                                <option value="none">No Quotes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="autoFormat" checked>
+                                <label class="form-check-label" for="autoFormat">
+                                    Auto Format
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <!-- Input Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="formatBtn" class="btn btn-primary">
+                                <i class="fas fa-code"></i> Format
+                            </button>
+                            <button id="validateBtn" class="btn btn-success">
+                                <i class="fas fa-check"></i> Validate
+                            </button>
+                            <button id="clearBtn" class="btn btn-light">
+                                <i class="fas fa-trash-alt"></i> Clear
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button id="sampleBtn" class="btn btn-outline-secondary">
+                                <i class="fas fa-lightbulb"></i> Sample
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="yamlInput" class="editor" placeholder="Paste your YAML here..."></textarea>
+                    <div id="errorMessage" class="error-message bg-danger-subtle"></div>
+                    <div class="editor-toolbar">
+                        <span class="char-count">Characters: <span id="charCount">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Schema Editor -->
+                <div class="schema-editor mt-3">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="useSchema">
+                        <label class="form-check-label" for="useSchema">
+                            Use Schema Validation
+                        </label>
+                    </div>
+                    <div class="editor-container">
+                        <textarea id="schemaInput" class="editor" style="min-height: 200px;" placeholder="Paste your JSON Schema here..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="copyBtn" class="btn btn-primary">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button id="downloadBtn" class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button id="compressBtn" class="btn btn-info">
+                                <i class="fas fa-compress-alt"></i> Compress
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <span id="validationStatus" class="text-success">
+                                <i class="fas fa-check-circle"></i> Valid YAML
+                            </span>
+                        </div>
+                    </div>
+                    <div id="codeOutput">
+                        <pre class="output"><code id="yamlOutput" class="language-yaml"></code></pre>
+                    </div>
+                    <div id="previewOutput" class="preview-container">
+                        <div class="preview"></div>
+                    </div>
+                    <div id="validationMessages"></div>
+                    <div class="stats" id="yamlStats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">How to Use</h2>
+                        <ol class="mb-0">
+                            <li>Paste your YAML data into the left editor</li>
+                            <li>Click "Format" to beautify the YAML with proper indentation</li>
+                            <li>Use "Validate" to check for syntax errors and schema compliance</li>
+                            <li>Convert between YAML and JSON formats</li>
+                            <li>Add a JSON Schema for validation (optional)</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Syntax Highlighting</h3>
+                        <p class="text-muted">Color-coded output makes YAML easier to read and understand</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Schema Validation</h3>
+                        <p class="text-muted">Validate YAML against JSON Schema with detailed error reporting</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Format Conversion</h3>
+                        <p class="text-muted">Convert between YAML and JSON with customizable options</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/8.12.0/ajv.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // DOM Elements
+        const yamlInput = document.getElementById('yamlInput');
+        const yamlOutput = document.getElementById('yamlOutput');
+        const codeOutput = document.getElementById('codeOutput');
+        const previewOutput = document.getElementById('previewOutput');
+        const formatBtn = document.getElementById('formatBtn');
+        const validateBtn = document.getElementById('validateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const compressBtn = document.getElementById('compressBtn');
+        const sampleBtn = document.getElementById('sampleBtn');
+        const indentSize = document.getElementById('indentSize');
+        const outputFormat = document.getElementById('outputFormat');
+        const quoteStyle = document.getElementById('quoteStyle');
+        const autoFormat = document.getElementById('autoFormat');
+        const useSchema = document.getElementById('useSchema');
+        const schemaInput = document.getElementById('schemaInput');
+        const errorMessage = document.getElementById('errorMessage');
+        const charCount = document.getElementById('charCount');
+        const validationStatus = document.getElementById('validationStatus');
+        const validationMessages = document.getElementById('validationMessages');
+        const yamlStats = document.getElementById('yamlStats');
+
+        // Initialize Ajv
+        const ajv = new Ajv();
+
+        // Sample YAML
+        const sampleYAML = 
+`# Kubernetes Deployment Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-application
+  namespace: production
+  labels:
+    app: web
+    environment: prod
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  
+  template:
+    metadata:
+      labels:
+        app: web
+    
+    spec:
+      containers:
+        - name: web-server
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+          
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: api-url
+          
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+      
+      volumes:
+        - name: config-volume
+          configMap:
+            name: app-config
+
+---
+# Service Configuration
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  namespace: production
+
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer`;
+
+        // Sample JSON Schema
+        const sampleSchema = {
+            type: "object",
+            required: ["apiVersion", "kind", "metadata", "spec"],
+            properties: {
+                apiVersion: { type: "string" },
+                kind: { type: "string" },
+                metadata: {
+                    type: "object",
+                    required: ["name", "namespace"],
+                    properties: {
+                        name: { type: "string" },
+                        namespace: { type: "string" },
+                        labels: {
+                            type: "object",
+                            additionalProperties: { type: "string" }
+                        }
+                    }
+                },
+                spec: {
+                    type: "object",
+                    properties: {
+                        replicas: { type: "integer", minimum: 1 },
+                        selector: {
+                            type: "object",
+                            properties: {
+                                matchLabels: {
+                                    type: "object",
+                                    additionalProperties: { type: "string" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Format YAML
+        function formatYAML() {
+            try {
+                const input = yamlInput.value.trim();
+                if (!input) {
+                    showError('Please enter some YAML');
+                    return;
+                }
+
+                // Parse YAML to object
+                const parsed = jsyaml.loadAll(input);
+
+                // Format based on output type
+                let formatted;
+                if (outputFormat.value === 'json') {
+                    formatted = JSON.stringify(parsed.length === 1 ? parsed[0] : parsed, null, Number(indentSize.value));
+                    yamlOutput.className = 'language-json';
+                } else {
+                    const options = {
+                        indent: Number(indentSize.value),
+                        quotingType: quoteStyle.value === 'single' ? "'" : quoteStyle.value === 'double' ? '"' : '',
+                        lineWidth: -1,
+                        noRefs: true
+                    };
+                    formatted = parsed.map(doc => jsyaml.dump(doc, options)).join('\n---\n');
+                    yamlOutput.className = 'language-yaml';
+                }
+
+                yamlOutput.textContent = formatted;
+                Prism.highlightElement(yamlOutput);
+
+                showSuccess();
+                updateStats(formatted);
+                validateYAML(parsed);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Validate YAML
+        function validateYAML(parsed) {
+            try {
+                validationMessages.innerHTML = '';
+                const messages = [];
+
+                // Basic validation
+                if (!Array.isArray(parsed)) parsed = [parsed];
+                parsed.forEach((doc, index) => {
+                    if (typeof doc !== 'object' || doc === null) {
+                        messages.push(`Document ${index + 1}: Invalid YAML structure`);
+                    }
+                });
+
+                // Schema validation if enabled
+                if (useSchema.checked && schemaInput.value.trim()) {
+                    try {
+                        const schema = JSON.parse(schemaInput.value);
+                        const validate = ajv.compile(schema);
+                        
+                        parsed.forEach((doc, index) => {
+                            if (!validate(doc)) {
+                                validate.errors.forEach(error => {
+                                    messages.push(`Document ${index + 1}: ${error.message} at ${error.instancePath}`);
+                                });
+                            }
+                        });
+                    } catch (error) {
+                        messages.push(`Schema Error: ${error.message}`);
+                    }
+                }
+
+                // Display validation messages
+                if (messages.length > 0) {
+                    validationMessages.innerHTML = messages
+                        .map(message => `
+                            <div class="validation-error">
+                                <i class="fas fa-exclamation-circle"></i> ${message}
+                            </div>
+                        `)
+                        .join('');
+                    validationStatus.className = 'text-warning';
+                    validationStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Validation Issues';
+                }
+
+                return messages.length === 0;
+            } catch (error) {
+                showError(error.message);
+                return false;
+            }
+        }
+
+        // Compress YAML
+        function compressYAML() {
+            try {
+                const input = yamlInput.value.trim();
+                if (!input) {
+                    showError('Please enter some YAML');
+                    return;
+                }
+
+                // Parse YAML to object
+                const parsed = jsyaml.loadAll(input);
+
+                // Compress based on output type
+                let compressed;
+                if (outputFormat.value === 'json') {
+                    compressed = JSON.stringify(parsed.length === 1 ? parsed[0] : parsed);
+                    yamlOutput.className = 'language-json';
+                } else {
+                    const options = {
+                        indent: 0,
+                        flowLevel: 1,
+                        noRefs: true
+                    };
+                    compressed = parsed.map(doc => jsyaml.dump(doc, options)).join('\n---\n');
+                    yamlOutput.className = 'language-yaml';
+                }
+
+                yamlOutput.textContent = compressed;
+                Prism.highlightElement(yamlOutput);
+
+                showSuccess();
+                updateStats(compressed);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Update YAML statistics
+        function updateStats(yaml) {
+            try {
+                const parsed = jsyaml.loadAll(yaml);
+                const stats = {
+                    size: new Blob([yaml]).size,
+                    length: yaml.length,
+                    documents: parsed.length,
+                    lines: yaml.split('\n').length,
+                    mappings: 0,
+                    sequences: 0,
+                    scalars: 0
+                };
+
+                function countNodes(obj) {
+                    if (obj === null || typeof obj !== 'object') {
+                        stats.scalars++;
+                        return;
+                    }
+
+                    if (Array.isArray(obj)) {
+                        stats.sequences++;
+                        obj.forEach(countNodes);
+                    } else {
+                        stats.mappings++;
+                        Object.values(obj).forEach(countNodes);
+                    }
+                }
+
+                parsed.forEach(countNodes);
+                
+                yamlStats.textContent = `Size: ${formatBytes(stats.size)} | Documents: ${stats.documents} | Lines: ${stats.lines} | Mappings: ${stats.mappings} | Sequences: ${stats.sequences} | Scalars: ${stats.scalars}`;
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = `Error: ${message}`;
+            validationStatus.className = 'text-danger';
+            validationStatus.innerHTML = '<i class="fas fa-times-circle"></i> Invalid YAML';
+            yamlStats.textContent = '';
+        }
+
+        // Show success message
+        function showSuccess() {
+            errorMessage.style.display = 'none';
+            validationStatus.className = 'text-success';
+            validationStatus.innerHTML = '<i class="fas fa-check-circle"></i> Valid YAML';
+        }
+
+        // Update character count
+        function updateCharCount() {
+            charCount.textContent = yamlInput.value.length;
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            navigator.clipboard.writeText(yamlOutput.textContent)
+                .then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+        }
+
+        // Download file
+        function downloadFile() {
+            const content = yamlOutput.textContent;
+            if (!content) {
+                showError('No content to download');
+                return;
+            }
+
+            const extension = outputFormat.value === 'json' ? 'json' : 'yaml';
+            const blob = new Blob([content], { type: `application/${extension}` });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `formatted.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Toggle schema editor
+        function toggleSchemaEditor() {
+            const schemaEditor = document.querySelector('.schema-editor');
+            schemaEditor.classList.toggle('show', useSchema.checked);
+            if (useSchema.checked && !schemaInput.value) {
+                schemaInput.value = JSON.stringify(sampleSchema, null, 2);
+            }
+            if (yamlInput.value) {
+                formatYAML();
+            }
+        }
+
+        // Event Listeners
+        formatBtn.addEventListener('click', formatYAML);
+        validateBtn.addEventListener('click', () => {
+            const input = yamlInput.value.trim();
+            if (!input) {
+                showError('Please enter some YAML');
+                return;
+            }
+            try {
+                const parsed = jsyaml.loadAll(input);
+                validateYAML(parsed);
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        clearBtn.addEventListener('click', () => {
+            yamlInput.value = '';
+            yamlOutput.textContent = '';
+            validationMessages.innerHTML = '';
+            updateCharCount();
+            errorMessage.style.display = 'none';
+            yamlStats.textContent = '';
+        });
+        copyBtn.addEventListener('click', copyToClipboard);
+        downloadBtn.addEventListener('click', downloadFile);
+        compressBtn.addEventListener('click', compressYAML);
+        sampleBtn.addEventListener('click', () => {
+            yamlInput.value = sampleYAML;
+            updateCharCount();
+            formatYAML();
+        });
+        yamlInput.addEventListener('input', () => {
+            updateCharCount();
+            if (autoFormat.checked) {
+                formatYAML();
+            }
+        });
+        useSchema.addEventListener('change', toggleSchemaEditor);
+        [indentSize, outputFormat, quoteStyle].forEach(input => {
+            input.addEventListener('change', () => {
+                if (yamlInput.value) {
+                    formatYAML();
+                }
+            });
+        });
+
+        // Initialize Prism.js
+        Prism.highlightElement(yamlOutput);
+    </script>
+</body>
+</html> 

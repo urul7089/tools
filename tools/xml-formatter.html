@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Formatter - Format and Beautify XML | Multi-Tools</title>
+    <meta name="description" content="Free online XML formatter and beautifier with syntax highlighting. Format, validate, and minify your XML documents with tree view visualization.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        .tool-header {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .editor-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .editor-toolbar {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem;
+        }
+        .editor {
+            min-height: 400px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 1rem;
+            resize: vertical;
+            width: 100%;
+        }
+        .output {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .error-message {
+            color: #ef4444;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+        .btn-group .btn {
+            margin-right: 0.5rem;
+        }
+        .char-count {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        .format-options {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .indent-size {
+            width: auto;
+            display: inline-block;
+        }
+        .tree-view {
+            min-height: 400px;
+            background-color: white;
+            border-radius: 0.5rem;
+            overflow: auto;
+            padding: 1rem;
+        }
+        .tree-node {
+            margin-left: 1.5rem;
+        }
+        .tree-node-content {
+            display: flex;
+            align-items: center;
+            padding: 0.25rem 0;
+        }
+        .tree-node-toggle {
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        .tree-node-name {
+            color: #1d4ed8;
+        }
+        .tree-node-value {
+            color: #059669;
+            margin-left: 0.5rem;
+        }
+        .tree-node-attribute {
+            color: #7c3aed;
+        }
+        .stats {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Tool Header -->
+    <header class="tool-header">
+        <div class="container text-center">
+            <h1>XML Formatter</h1>
+            <p class="lead">Format, beautify, and validate your XML documents with tree view visualization</p>
+        </div>
+    </header>
+
+    <main class="container pb-4">
+        <!-- Format Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="format-options">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Indent Size</label>
+                            <select class="form-select indent-size" id="indentSize">
+                                <option value="2">2 spaces</option>
+                                <option value="4">4 spaces</option>
+                                <option value="tab">Tab</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">View Mode</label>
+                            <select class="form-select" id="viewMode">
+                                <option value="code">Code View</option>
+                                <option value="tree">Tree View</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Quote Style</label>
+                            <select class="form-select" id="quoteStyle">
+                                <option value="double">Double Quotes</option>
+                                <option value="single">Single Quotes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="selfClosing" checked>
+                                <label class="form-check-label" for="selfClosing">
+                                    Self-Closing Tags
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <!-- Input Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="formatBtn" class="btn btn-primary">
+                                <i class="fas fa-code"></i> Format
+                            </button>
+                            <button id="minifyBtn" class="btn btn-secondary">
+                                <i class="fas fa-compress-alt"></i> Minify
+                            </button>
+                            <button id="clearBtn" class="btn btn-light">
+                                <i class="fas fa-trash-alt"></i> Clear
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button id="sampleBtn" class="btn btn-outline-secondary">
+                                <i class="fas fa-lightbulb"></i> Sample
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="xmlInput" class="editor" placeholder="Paste your XML here..."></textarea>
+                    <div id="errorMessage" class="error-message bg-danger-subtle"></div>
+                    <div class="editor-toolbar">
+                        <span class="char-count">Characters: <span id="charCount">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="copyBtn" class="btn btn-primary">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button id="downloadBtn" class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <span id="validationStatus" class="text-success">
+                                <i class="fas fa-check-circle"></i> Valid XML
+                            </span>
+                        </div>
+                    </div>
+                    <div id="outputContainer">
+                        <pre class="output"><code id="xmlOutput" class="language-markup"></code></pre>
+                        <div id="treeView" class="tree-view" style="display: none;"></div>
+                    </div>
+                    <div class="stats" id="xmlStats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">How to Use</h2>
+                        <ol class="mb-0">
+                            <li>Paste your XML document into the left editor</li>
+                            <li>Select your preferred formatting options</li>
+                            <li>Click "Format" to beautify the XML with proper indentation</li>
+                            <li>Switch between Code and Tree views to explore the structure</li>
+                            <li>Copy the formatted XML or download it as a file</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Syntax Highlighting</h3>
+                        <p class="text-muted">Color-coded output makes XML documents easier to read and understand</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Tree Visualization</h3>
+                        <p class="text-muted">Explore your XML structure with an interactive tree view</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Advanced Options</h3>
+                        <p class="text-muted">Customize indentation, quotes, and self-closing tags</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-markup.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // DOM Elements
+        const xmlInput = document.getElementById('xmlInput');
+        const xmlOutput = document.getElementById('xmlOutput');
+        const treeView = document.getElementById('treeView');
+        const formatBtn = document.getElementById('formatBtn');
+        const minifyBtn = document.getElementById('minifyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const sampleBtn = document.getElementById('sampleBtn');
+        const indentSize = document.getElementById('indentSize');
+        const viewMode = document.getElementById('viewMode');
+        const quoteStyle = document.getElementById('quoteStyle');
+        const selfClosing = document.getElementById('selfClosing');
+        const errorMessage = document.getElementById('errorMessage');
+        const charCount = document.getElementById('charCount');
+        const validationStatus = document.getElementById('validationStatus');
+        const xmlStats = document.getElementById('xmlStats');
+
+        // Sample XML
+        const sampleXML = 
+`<?xml version="1.0" encoding="UTF-8"?>
+<project name="Multi-Tools" version="1.0.0">
+    <description>A collection of useful web development tools</description>
+    
+    <categories>
+        <category name="Formatters">
+            <tools>
+                <tool>
+                    <name>XML Formatter</name>
+                    <description>Format and validate XML documents</description>
+                    <features>
+                        <feature>syntax highlighting</feature>
+                        <feature>tree view</feature>
+                        <feature>validation</feature>
+                    </features>
+                </tool>
+                <tool>
+                    <name>JSON Formatter</name>
+                    <description>Format and validate JSON data</description>
+                    <features>
+                        <feature>syntax highlighting</feature>
+                        <feature>tree view</feature>
+                        <feature>validation</feature>
+                    </features>
+                </tool>
+                <tool>
+                    <name>YAML Formatter</name>
+                    <description>Format and convert YAML data</description>
+                    <features>
+                        <feature>syntax highlighting</feature>
+                        <feature>JSON conversion</feature>
+                        <feature>validation</feature>
+                    </features>
+                </tool>
+            </tools>
+        </category>
+        
+        <category name="Converters">
+            <tools>
+                <tool>
+                    <name>XML to JSON</name>
+                    <description>Convert between XML and JSON formats</description>
+                    <features>
+                        <feature>bidirectional</feature>
+                        <feature>validation</feature>
+                        <feature>preview</feature>
+                    </features>
+                </tool>
+                <tool>
+                    <name>XML to YAML</name>
+                    <description>Convert between XML and YAML formats</description>
+                    <features>
+                        <feature>bidirectional</feature>
+                        <feature>validation</feature>
+                        <feature>preview</feature>
+                    </features>
+                </tool>
+            </tools>
+        </category>
+    </categories>
+    
+    <settings>
+        <theme>light</theme>
+        <indentSize>2</indentSize>
+        <quoteStyle>double</quoteStyle>
+        <selfClosing>true</selfClosing>
+    </settings>
+    
+    <meta>
+        <author>Multi-Tools Team</author>
+        <website>https://multi-tools.example.com</website>
+        <license>MIT</license>
+        <lastUpdated>2024-03-15T12:00:00Z</lastUpdated>
+    </meta>
+</project>`;
+
+        // Format XML
+        function formatXML() {
+            try {
+                const input = xmlInput.value.trim();
+                if (!input) {
+                    showError('Please enter some XML data');
+                    return;
+                }
+
+                // Parse and validate XML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(input, 'text/xml');
+                if (doc.getElementsByTagName('parsererror').length > 0) {
+                    showError('Invalid XML syntax');
+                    return;
+                }
+
+                // Format XML
+                const formatted = formatXMLString(doc);
+
+                if (viewMode.value === 'code') {
+                    xmlOutput.textContent = formatted;
+                    Prism.highlightElement(xmlOutput);
+                    xmlOutput.parentElement.style.display = 'block';
+                    treeView.style.display = 'none';
+                } else {
+                    treeView.style.display = 'block';
+                    xmlOutput.parentElement.style.display = 'none';
+                    renderTreeView(doc.documentElement);
+                }
+
+                showSuccess();
+                updateStats(formatted);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Format XML string with proper indentation
+        function formatXMLString(doc) {
+            const serializer = new XMLSerializer();
+            const xml = serializer.serializeToString(doc);
+            
+            // Create a temporary element to format the XML
+            const temp = document.createElement('div');
+            temp.innerHTML = xml
+                .replace(/></g, '>\n<')
+                .replace(/(<[\w\s="']+)\/>/g, selfClosing.checked ? '$1/>' : '$1></\$1>');
+            
+            const indent = indentSize.value === 'tab' ? '\t' : ' '.repeat(Number(indentSize.value));
+            const lines = temp.innerHTML.split('\n');
+            let depth = 0;
+            let formatted = '';
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.match(/<\/[\w-]+>/)) {
+                    depth--;
+                }
+                formatted += indent.repeat(depth) + line + '\n';
+                if (line.match(/<[\w-]+[^>]*>/) && !line.match(/<\/[\w-]+>/) && !line.match(/\/>/)) {
+                    depth++;
+                }
+            });
+            
+            // Apply quote style
+            return formatted.replace(/"/g, quoteStyle.value === 'single' ? "'" : '"');
+        }
+
+        // Render tree view
+        function renderTreeView(node, parentElement = treeView) {
+            // Clear parent if it's the root
+            if (parentElement === treeView) {
+                parentElement.innerHTML = '';
+            }
+
+            const nodeElement = document.createElement('div');
+            nodeElement.className = 'tree-node';
+
+            const contentElement = document.createElement('div');
+            contentElement.className = 'tree-node-content';
+
+            // Add toggle button if node has children
+            if (node.children.length > 0) {
+                const toggleElement = document.createElement('span');
+                toggleElement.className = 'tree-node-toggle';
+                toggleElement.innerHTML = '<i class="fas fa-caret-down"></i>';
+                toggleElement.onclick = () => {
+                    const childrenContainer = nodeElement.querySelector('.tree-node-children');
+                    const icon = toggleElement.querySelector('i');
+                    if (childrenContainer.style.display === 'none') {
+                        childrenContainer.style.display = 'block';
+                        icon.className = 'fas fa-caret-down';
+                    } else {
+                        childrenContainer.style.display = 'none';
+                        icon.className = 'fas fa-caret-right';
+                    }
+                };
+                contentElement.appendChild(toggleElement);
+            }
+
+            // Add node name
+            const nameElement = document.createElement('span');
+            nameElement.className = 'tree-node-name';
+            nameElement.textContent = `<${node.nodeName}`;
+            contentElement.appendChild(nameElement);
+
+            // Add attributes
+            if (node.attributes) {
+                Array.from(node.attributes).forEach(attr => {
+                    const attrElement = document.createElement('span');
+                    attrElement.className = 'tree-node-attribute';
+                    attrElement.textContent = ` ${attr.name}="${attr.value}"`;
+                    contentElement.appendChild(attrElement);
+                });
+            }
+
+            // Close tag
+            const closeElement = document.createElement('span');
+            closeElement.className = 'tree-node-name';
+            closeElement.textContent = '>';
+            contentElement.appendChild(closeElement);
+
+            // Add text content if leaf node
+            if (node.children.length === 0 && node.textContent.trim()) {
+                const valueElement = document.createElement('span');
+                valueElement.className = 'tree-node-value';
+                valueElement.textContent = node.textContent.trim();
+                contentElement.appendChild(valueElement);
+            }
+
+            nodeElement.appendChild(contentElement);
+
+            // Recursively add children
+            if (node.children.length > 0) {
+                const childrenContainer = document.createElement('div');
+                childrenContainer.className = 'tree-node-children';
+                Array.from(node.children).forEach(child => {
+                    renderTreeView(child, childrenContainer);
+                });
+                nodeElement.appendChild(childrenContainer);
+            }
+
+            parentElement.appendChild(nodeElement);
+        }
+
+        // Minify XML
+        function minifyXML() {
+            try {
+                const input = xmlInput.value.trim();
+                if (!input) {
+                    showError('Please enter some XML data');
+                    return;
+                }
+
+                // Parse and validate XML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(input, 'text/xml');
+                if (doc.getElementsByTagName('parsererror').length > 0) {
+                    showError('Invalid XML syntax');
+                    return;
+                }
+
+                // Minify XML
+                const serializer = new XMLSerializer();
+                const minified = serializer.serializeToString(doc)
+                    .replace(/>\s+</g, '><')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                xmlOutput.textContent = minified;
+                Prism.highlightElement(xmlOutput);
+                xmlOutput.parentElement.style.display = 'block';
+                treeView.style.display = 'none';
+
+                showSuccess();
+                updateStats(minified);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Update XML statistics
+        function updateStats(xml) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xml, 'text/xml');
+            
+            const stats = {
+                size: new Blob([xml]).size,
+                lines: xml.split('\n').length,
+                elements: doc.getElementsByTagName('*').length,
+                attributes: Array.from(doc.getElementsByTagName('*'))
+                    .reduce((count, el) => count + el.attributes.length, 0)
+            };
+            
+            xmlStats.textContent = `Size: ${formatBytes(stats.size)} | Lines: ${stats.lines} | Elements: ${stats.elements} | Attributes: ${stats.attributes}`;
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = `Error: ${message}`;
+            validationStatus.className = 'text-danger';
+            validationStatus.innerHTML = '<i class="fas fa-times-circle"></i> Invalid XML';
+            xmlStats.textContent = '';
+        }
+
+        // Show success message
+        function showSuccess() {
+            errorMessage.style.display = 'none';
+            validationStatus.className = 'text-success';
+            validationStatus.innerHTML = '<i class="fas fa-check-circle"></i> Valid XML';
+        }
+
+        // Update character count
+        function updateCharCount() {
+            charCount.textContent = xmlInput.value.length;
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const textToCopy = viewMode.value === 'code' ? 
+                xmlOutput.textContent : 
+                xmlInput.value;
+
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+        }
+
+        // Download file
+        function downloadFile() {
+            const content = viewMode.value === 'code' ? 
+                xmlOutput.textContent : 
+                xmlInput.value;
+
+            const blob = new Blob([content], { type: 'application/xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formatted.xml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        formatBtn.addEventListener('click', formatXML);
+        minifyBtn.addEventListener('click', minifyXML);
+        clearBtn.addEventListener('click', () => {
+            xmlInput.value = '';
+            xmlOutput.textContent = '';
+            treeView.innerHTML = '';
+            updateCharCount();
+            errorMessage.style.display = 'none';
+            xmlStats.textContent = '';
+        });
+        copyBtn.addEventListener('click', copyToClipboard);
+        downloadBtn.addEventListener('click', downloadFile);
+        sampleBtn.addEventListener('click', () => {
+            xmlInput.value = sampleXML;
+            updateCharCount();
+            formatXML();
+        });
+        xmlInput.addEventListener('input', updateCharCount);
+        [indentSize, viewMode, quoteStyle, selfClosing].forEach(input => {
+            input.addEventListener('change', () => {
+                if (xmlInput.value) {
+                    formatXML();
+                }
+            });
+        });
+
+        // Initialize Prism.js
+        Prism.highlightElement(xmlOutput);
+    </script>
+</body>
+</html> 

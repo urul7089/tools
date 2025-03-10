@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Tools - Free Online Development Utilities | Multi-Tools</title>
+    <meta name="description" content="Free online developer tools including formatters, encoders, minifiers, and more. Essential utilities for web developers and programmers.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .category-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .tool-card {
+            height: 100%;
+        }
+        .tool-card .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .tool-card .btn {
+            margin-top: auto;
+        }
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .category-description {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tool-tags {
+            margin-top: 0.5rem;
+        }
+        .tool-tag {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            background-color: var(--light-color);
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Category Header -->
+    <header class="category-header text-center">
+        <div class="container">
+            <i class="fas fa-code tool-icon"></i>
+            <h1>Developer Tools</h1>
+            <div class="category-description">
+                <p class="lead mb-0">Essential utilities for developers and programmers. Format code, encode/decode data, minify files, and more.</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-4">
+        <!-- Search Bar -->
+        <div class="row mb-4">
+            <div class="col-md-6 mx-auto">
+                <div class="input-group">
+                    <input type="text" id="toolSearch" class="form-control" placeholder="Search developer tools...">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="tool-grid mb-4">
+            <!-- Base64 Encoder & Decoder -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-exchange-alt text-primary tool-icon"></i>
+                    <h3 class="h5">Base64 Encoder & Decoder</h3>
+                    <p class="text-muted">Convert text and files to Base64 format or decode Base64 strings.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Encoding</span>
+                        <span class="tool-tag">Files</span>
+                        <span class="tool-tag">Text</span>
+                    </div>
+                    <a href="/tools/base64-encoder-decoder.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- JSON Formatter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-code text-primary tool-icon"></i>
+                    <h3 class="h5">JSON Formatter</h3>
+                    <p class="text-muted">Format and validate JSON data with syntax highlighting.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">JSON</span>
+                        <span class="tool-tag">Formatting</span>
+                        <span class="tool-tag">Validation</span>
+                    </div>
+                    <a href="/tools/json-formatter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- HTML to Markdown -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-file-code text-primary tool-icon"></i>
+                    <h3 class="h5">HTML to Markdown</h3>
+                    <p class="text-muted">Convert HTML code to Markdown format and vice versa.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">HTML</span>
+                        <span class="tool-tag">Markdown</span>
+                        <span class="tool-tag">Conversion</span>
+                    </div>
+                    <a href="/tools/html-to-markdown.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CSS Minifier -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-compress-alt text-primary tool-icon"></i>
+                    <h3 class="h5">CSS Minifier</h3>
+                    <p class="text-muted">Minify CSS code to reduce file size and improve load times.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">CSS</span>
+                        <span class="tool-tag">Minification</span>
+                        <span class="tool-tag">Optimization</span>
+                    </div>
+                    <a href="/tools/css-minifier.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- JavaScript Minifier -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fab fa-js text-primary tool-icon"></i>
+                    <h3 class="h5">JavaScript Minifier</h3>
+                    <p class="text-muted">Minify JavaScript code for better performance.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">JavaScript</span>
+                        <span class="tool-tag">Minification</span>
+                        <span class="tool-tag">Optimization</span>
+                    </div>
+                    <a href="/tools/javascript-minifier.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SQL Formatter -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-database text-primary tool-icon"></i>
+                    <h3 class="h5">SQL Formatter</h3>
+                    <p class="text-muted">Format SQL queries for better readability and debugging.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">SQL</span>
+                        <span class="tool-tag">Formatting</span>
+                        <span class="tool-tag">Database</span>
+                    </div>
+                    <a href="/tools/sql-formatter.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Color Code Picker -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-palette text-primary tool-icon"></i>
+                    <h3 class="h5">Color Code Picker</h3>
+                    <p class="text-muted">Pick colors and get HEX, RGB, and HSL values.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Colors</span>
+                        <span class="tool-tag">Design</span>
+                        <span class="tool-tag">CSS</span>
+                    </div>
+                    <a href="/tools/color-picker.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- IP Address Lookup -->
+            <div class="card tool-card">
+                <div class="card-body">
+                    <i class="fas fa-network-wired text-primary tool-icon"></i>
+                    <h3 class="h5">IP Address Lookup</h3>
+                    <p class="text-muted">Get detailed information about any IP address.</p>
+                    <div class="tool-tags mb-3">
+                        <span class="tool-tag">Networking</span>
+                        <span class="tool-tag">IP</span>
+                        <span class="tool-tag">Geolocation</span>
+                    </div>
+                    <a href="/tools/ip-lookup.html" class="btn btn-primary">
+                        Use Tool <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // Category Page Specific JavaScript
+        const searchInput = document.getElementById('toolSearch');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tool-tag'))
+                    .map(tag => tag.textContent.toLowerCase());
+                
+                const matches = title.includes(searchTerm) || 
+                              description.includes(searchTerm) ||
+                              tags.some(tag => tag.includes(searchTerm));
+                
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

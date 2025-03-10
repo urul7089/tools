@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Formatter - Format and Beautify SQL | Multi-Tools</title>
+    <meta name="description" content="Free online SQL formatter and beautifier with syntax highlighting. Format, validate, and optimize your SQL queries with keyword capitalization and smart indentation.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        .tool-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .editor-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .editor-toolbar {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem;
+        }
+        .editor {
+            min-height: 400px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 1rem;
+            resize: vertical;
+            width: 100%;
+        }
+        .output {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .error-message {
+            color: #ef4444;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+        .btn-group .btn {
+            margin-right: 0.5rem;
+        }
+        .char-count {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        .format-options {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .indent-size {
+            width: auto;
+            display: inline-block;
+        }
+        .stats {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Tool Header -->
+    <header class="tool-header">
+        <div class="container text-center">
+            <h1>SQL Formatter</h1>
+            <p class="lead">Format and beautify your SQL queries with syntax highlighting and smart indentation</p>
+        </div>
+    </header>
+
+    <main class="container pb-4">
+        <!-- Format Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="format-options">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Indent Size</label>
+                            <select class="form-select indent-size" id="indentSize">
+                                <option value="2">2 spaces</option>
+                                <option value="4">4 spaces</option>
+                                <option value="tab">Tab</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">SQL Dialect</label>
+                            <select class="form-select" id="sqlDialect">
+                                <option value="standard">Standard SQL</option>
+                                <option value="mysql">MySQL</option>
+                                <option value="postgresql">PostgreSQL</option>
+                                <option value="sqlite">SQLite</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Keyword Case</label>
+                            <select class="form-select" id="keywordCase">
+                                <option value="upper">UPPERCASE</option>
+                                <option value="lower">lowercase</option>
+                                <option value="preserve">Preserve Case</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="lineBreakBeforeComma" checked>
+                                <label class="form-check-label" for="lineBreakBeforeComma">
+                                    Line Break Before Comma
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <!-- Input Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="formatBtn" class="btn btn-primary">
+                                <i class="fas fa-code"></i> Format
+                            </button>
+                            <button id="minifyBtn" class="btn btn-secondary">
+                                <i class="fas fa-compress-alt"></i> Minify
+                            </button>
+                            <button id="clearBtn" class="btn btn-light">
+                                <i class="fas fa-trash-alt"></i> Clear
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button id="sampleBtn" class="btn btn-outline-secondary">
+                                <i class="fas fa-lightbulb"></i> Sample
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="sqlInput" class="editor" placeholder="Paste your SQL query here..."></textarea>
+                    <div id="errorMessage" class="error-message bg-danger-subtle"></div>
+                    <div class="editor-toolbar">
+                        <span class="char-count">Characters: <span id="charCount">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="copyBtn" class="btn btn-primary">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button id="downloadBtn" class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <span id="validationStatus" class="text-success">
+                                <i class="fas fa-check-circle"></i> Valid SQL
+                            </span>
+                        </div>
+                    </div>
+                    <pre class="output"><code id="sqlOutput" class="language-sql"></code></pre>
+                    <div class="stats" id="sqlStats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">How to Use</h2>
+                        <ol class="mb-0">
+                            <li>Paste your SQL query into the left editor</li>
+                            <li>Select your preferred formatting options</li>
+                            <li>Choose the appropriate SQL dialect</li>
+                            <li>Click "Format" to beautify the SQL with proper indentation</li>
+                            <li>Copy the formatted SQL or download it as a file</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Syntax Highlighting</h3>
+                        <p class="text-muted">Color-coded output makes SQL queries easier to read and understand</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Multiple Dialects</h3>
+                        <p class="text-muted">Support for Standard SQL, MySQL, PostgreSQL, and SQLite syntax</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Advanced Options</h3>
+                        <p class="text-muted">Customize indentation, keyword case, and line breaks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/12.2.4/sql-formatter.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // DOM Elements
+        const sqlInput = document.getElementById('sqlInput');
+        const sqlOutput = document.getElementById('sqlOutput');
+        const formatBtn = document.getElementById('formatBtn');
+        const minifyBtn = document.getElementById('minifyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const sampleBtn = document.getElementById('sampleBtn');
+        const indentSize = document.getElementById('indentSize');
+        const sqlDialect = document.getElementById('sqlDialect');
+        const keywordCase = document.getElementById('keywordCase');
+        const lineBreakBeforeComma = document.getElementById('lineBreakBeforeComma');
+        const errorMessage = document.getElementById('errorMessage');
+        const charCount = document.getElementById('charCount');
+        const validationStatus = document.getElementById('validationStatus');
+        const sqlStats = document.getElementById('sqlStats');
+
+        // Sample SQL
+        const sampleSQL = 
+`-- Multi-Tools Database Schema
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tools (
+    id SERIAL PRIMARY KEY,
+    category_id INTEGER REFERENCES categories(id),
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    features JSONB,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sample Data
+INSERT INTO categories (name, description) VALUES
+    ('Formatters', 'Code formatting and beautification tools'),
+    ('Converters', 'Data format conversion tools'),
+    ('Validators', 'Code and data validation tools');
+
+INSERT INTO tools (category_id, name, description, features) VALUES
+    (1, 'SQL Formatter', 'Format and beautify SQL queries', '{"syntax_highlighting": true, "dialect_support": true, "validation": true}'),
+    (1, 'JSON Formatter', 'Format and validate JSON data', '{"syntax_highlighting": true, "tree_view": true, "validation": true}'),
+    (1, 'XML Formatter', 'Format and validate XML documents', '{"syntax_highlighting": true, "tree_view": true, "validation": true}'),
+    (2, 'JSON to YAML', 'Convert between JSON and YAML', '{"bidirectional": true, "validation": true, "preview": true}'),
+    (2, 'XML to JSON', 'Convert between XML and JSON', '{"bidirectional": true, "validation": true, "preview": true}');
+
+-- Complex Query Example
+SELECT 
+    c.name AS category_name,
+    COUNT(t.id) AS tool_count,
+    STRING_AGG(t.name, ', ') AS tools_list,
+    AVG(JSONB_ARRAY_LENGTH(t.features::jsonb)) AS avg_features_count
+FROM 
+    categories c
+    LEFT JOIN tools t ON t.category_id = c.id
+WHERE 
+    t.is_active = true
+    AND t.created_at >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY 
+    c.id, c.name
+HAVING 
+    COUNT(t.id) > 0
+ORDER BY 
+    tool_count DESC, category_name ASC;`;
+
+        // Format SQL
+        function formatSQL() {
+            try {
+                const input = sqlInput.value.trim();
+                if (!input) {
+                    showError('Please enter some SQL');
+                    return;
+                }
+
+                // Format SQL using sql-formatter library
+                const formatted = sqlFormatter.format(input, {
+                    language: sqlDialect.value,
+                    indent: indentSize.value === 'tab' ? '\t' : ' '.repeat(Number(indentSize.value)),
+                    uppercase: keywordCase.value === 'upper',
+                    linesBetweenQueries: 2,
+                    commaPosition: lineBreakBeforeComma.checked ? 'before' : 'after'
+                });
+
+                // Apply keyword case if needed
+                let processedSQL = formatted;
+                if (keywordCase.value === 'lower') {
+                    processedSQL = processedSQL.replace(/\b(SELECT|FROM|WHERE|GROUP BY|ORDER BY|HAVING|JOIN|AND|OR|IN|BETWEEN|LIKE|IS|NULL|NOT|CREATE|INSERT|UPDATE|DELETE|ALTER|DROP|TABLE|INDEX|VIEW|TRIGGER|FUNCTION|PROCEDURE|CONSTRAINT|PRIMARY KEY|FOREIGN KEY|REFERENCES|DEFAULT|UNIQUE|CHECK|CASCADE|SET|VALUES|INTO|AS)\b/gi, 
+                        match => match.toLowerCase());
+                }
+
+                sqlOutput.textContent = processedSQL;
+                Prism.highlightElement(sqlOutput);
+                showSuccess();
+                updateStats(processedSQL);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Minify SQL
+        function minifySQL() {
+            try {
+                const input = sqlInput.value.trim();
+                if (!input) {
+                    showError('Please enter some SQL');
+                    return;
+                }
+
+                // Minify SQL by removing extra whitespace and formatting
+                const minified = input
+                    .replace(/\s+/g, ' ')          // Replace multiple spaces with single space
+                    .replace(/\s*([,()])\s*/g, '$1') // Remove spaces around commas and parentheses
+                    .replace(/\s*;\s*/g, ';')      // Remove spaces around semicolons
+                    .replace(/--.*?\n/g, '')       // Remove single-line comments
+                    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
+                    .trim();
+
+                sqlOutput.textContent = minified;
+                Prism.highlightElement(sqlOutput);
+                showSuccess();
+                updateStats(minified);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Update SQL statistics
+        function updateStats(sql) {
+            const stats = {
+                size: new Blob([sql]).size,
+                lines: sql.split('\n').length,
+                statements: sql.split(';').filter(s => s.trim()).length,
+                comments: (sql.match(/--.*?\n|\/\*[\s\S]*?\*\//g) || []).length
+            };
+            
+            sqlStats.textContent = `Size: ${formatBytes(stats.size)} | Lines: ${stats.lines} | Statements: ${stats.statements} | Comments: ${stats.comments}`;
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = `Error: ${message}`;
+            validationStatus.className = 'text-danger';
+            validationStatus.innerHTML = '<i class="fas fa-times-circle"></i> Invalid SQL';
+            sqlStats.textContent = '';
+        }
+
+        // Show success message
+        function showSuccess() {
+            errorMessage.style.display = 'none';
+            validationStatus.className = 'text-success';
+            validationStatus.innerHTML = '<i class="fas fa-check-circle"></i> Valid SQL';
+        }
+
+        // Update character count
+        function updateCharCount() {
+            charCount.textContent = sqlInput.value.length;
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            navigator.clipboard.writeText(sqlOutput.textContent)
+                .then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+        }
+
+        // Download file
+        function downloadFile() {
+            const blob = new Blob([sqlOutput.textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formatted.sql';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        formatBtn.addEventListener('click', formatSQL);
+        minifyBtn.addEventListener('click', minifySQL);
+        clearBtn.addEventListener('click', () => {
+            sqlInput.value = '';
+            sqlOutput.textContent = '';
+            updateCharCount();
+            errorMessage.style.display = 'none';
+            sqlStats.textContent = '';
+        });
+        copyBtn.addEventListener('click', copyToClipboard);
+        downloadBtn.addEventListener('click', downloadFile);
+        sampleBtn.addEventListener('click', () => {
+            sqlInput.value = sampleSQL;
+            updateCharCount();
+            formatSQL();
+        });
+        sqlInput.addEventListener('input', updateCharCount);
+        [indentSize, sqlDialect, keywordCase, lineBreakBeforeComma].forEach(input => {
+            input.addEventListener('change', () => {
+                if (sqlInput.value) {
+                    formatSQL();
+                }
+            });
+        });
+
+        // Initialize Prism.js
+        Prism.highlightElement(sqlOutput);
+    </script>
+</body>
+</html> 

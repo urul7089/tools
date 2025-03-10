@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Formatter - Format and Convert CSV | Multi-Tools</title>
+    <meta name="description" content="Free online CSV formatter and converter with preview. Format, validate, and convert CSV data to JSON, Excel, or HTML formats.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <style>
+        .tool-header {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .editor-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .editor-toolbar {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem;
+        }
+        .editor {
+            min-height: 400px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 1rem;
+            resize: vertical;
+            width: 100%;
+        }
+        .preview-container {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 400px;
+            overflow: auto;
+        }
+        .error-message {
+            color: #ef4444;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+            display: none;
+        }
+        .btn-group .btn {
+            margin-right: 0.5rem;
+        }
+        .char-count {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        .format-options {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .stats {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+        .validation-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        .validation-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+        .table-container {
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+        .table th {
+            white-space: nowrap;
+            background-color: #f8fafc;
+        }
+        .table td {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1rem;
+        }
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Tool Header -->
+    <header class="tool-header">
+        <div class="container text-center">
+            <h1>CSV Formatter</h1>
+            <p class="lead">Format and convert your CSV data with preview and validation</p>
+        </div>
+    </header>
+
+    <main class="container pb-4">
+        <!-- Format Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="format-options">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Delimiter</label>
+                            <select class="form-select" id="delimiter">
+                                <option value=",">Comma (,)</option>
+                                <option value=";">Semicolon (;)</option>
+                                <option value="\t">Tab (\t)</option>
+                                <option value="|">Pipe (|)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Output Format</label>
+                            <select class="form-select" id="outputFormat">
+                                <option value="csv">CSV</option>
+                                <option value="json">JSON</option>
+                                <option value="html">HTML Table</option>
+                                <option value="markdown">Markdown Table</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Quote Style</label>
+                            <select class="form-select" id="quoteStyle">
+                                <option value="minimal">Minimal</option>
+                                <option value="all">Quote All</option>
+                                <option value="nonnumeric">Non-numeric</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="hasHeader" checked>
+                                <label class="form-check-label" for="hasHeader">
+                                    First Row is Header
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <!-- Input Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="formatBtn" class="btn btn-primary">
+                                <i class="fas fa-code"></i> Format
+                            </button>
+                            <button id="validateBtn" class="btn btn-success">
+                                <i class="fas fa-check"></i> Validate
+                            </button>
+                            <button id="clearBtn" class="btn btn-light">
+                                <i class="fas fa-trash-alt"></i> Clear
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button id="sampleBtn" class="btn btn-outline-secondary">
+                                <i class="fas fa-lightbulb"></i> Sample
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="csvInput" class="editor" placeholder="Paste your CSV data here..."></textarea>
+                    <div id="errorMessage" class="error-message bg-danger-subtle"></div>
+                    <div class="editor-toolbar">
+                        <span class="char-count">Characters: <span id="charCount">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="editor-toolbar d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button id="copyBtn" class="btn btn-primary">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button id="downloadBtn" class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button id="previewBtn" class="btn btn-info">
+                                <i class="fas fa-table"></i> Preview
+                            </button>
+                        </div>
+                        <div class="toolbar-right">
+                            <span id="validationStatus" class="text-success">
+                                <i class="fas fa-check-circle"></i> Valid CSV
+                            </span>
+                        </div>
+                    </div>
+                    <div id="outputContainer" class="preview-container">
+                        <div id="csvOutput"></div>
+                    </div>
+                    <div id="validationMessages"></div>
+                    <div class="stats" id="csvStats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">How to Use</h2>
+                        <ol class="mb-0">
+                            <li>Paste your CSV data into the left editor</li>
+                            <li>Select your preferred delimiter and format options</li>
+                            <li>Click "Format" to beautify and validate the data</li>
+                            <li>Use "Preview" to see the data in a table view</li>
+                            <li>Export to various formats (CSV, JSON, HTML, Markdown)</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Data Preview</h3>
+                        <p class="text-muted">Interactive table view with sorting and filtering capabilities</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Format Options</h3>
+                        <p class="text-muted">Customize delimiters, quotes, and output formats</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Data Validation</h3>
+                        <p class="text-muted">Check for consistency and common CSV formatting issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Section -->
+        <div class="ad-placeholder mt-4">
+            <p class="text-muted">Advertisement</p>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        // DOM Elements
+        const csvInput = document.getElementById('csvInput');
+        const csvOutput = document.getElementById('csvOutput');
+        const outputContainer = document.getElementById('outputContainer');
+        const formatBtn = document.getElementById('formatBtn');
+        const validateBtn = document.getElementById('validateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewBtn = document.getElementById('previewBtn');
+        const sampleBtn = document.getElementById('sampleBtn');
+        const delimiter = document.getElementById('delimiter');
+        const outputFormat = document.getElementById('outputFormat');
+        const quoteStyle = document.getElementById('quoteStyle');
+        const hasHeader = document.getElementById('hasHeader');
+        const errorMessage = document.getElementById('errorMessage');
+        const charCount = document.getElementById('charCount');
+        const validationStatus = document.getElementById('validationStatus');
+        const validationMessages = document.getElementById('validationMessages');
+        const csvStats = document.getElementById('csvStats');
+
+        // Sample CSV
+        const sampleCSV = 
+`Product ID,Name,Category,Price,Stock,Last Updated
+1001,Laptop Pro X,Electronics,1299.99,50,2024-02-15
+1002,Wireless Mouse,Accessories,29.99,200,2024-02-14
+1003,4K Monitor,Electronics,499.99,30,2024-02-13
+1004,USB-C Cable,Accessories,19.99,500,2024-02-15
+1005,Gaming Keyboard,Electronics,149.99,75,2024-02-14
+1006,Webcam HD,Electronics,79.99,100,2024-02-13
+1007,Laptop Stand,Accessories,39.99,150,2024-02-15
+1008,External SSD,Storage,199.99,80,2024-02-14
+1009,Wireless Charger,Accessories,49.99,120,2024-02-13
+1010,Bluetooth Speaker,Electronics,89.99,60,2024-02-15`;
+
+        // Format CSV
+        function formatCSV() {
+            try {
+                const input = csvInput.value.trim();
+                if (!input) {
+                    showError('Please enter some CSV data');
+                    return;
+                }
+
+                // Parse CSV
+                const parseResult = Papa.parse(input, {
+                    delimiter: delimiter.value === '\\t' ? '\t' : delimiter.value,
+                    header: hasHeader.checked,
+                    skipEmptyLines: true
+                });
+
+                if (parseResult.errors.length > 0) {
+                    showError(parseResult.errors[0].message);
+                    return;
+                }
+
+                // Format based on output type
+                let formatted;
+                switch (outputFormat.value) {
+                    case 'json':
+                        formatted = JSON.stringify(parseResult.data, null, 2);
+                        break;
+                    case 'html':
+                        formatted = generateHTMLTable(parseResult.data);
+                        break;
+                    case 'markdown':
+                        formatted = generateMarkdownTable(parseResult.data);
+                        break;
+                    default:
+                        formatted = Papa.unparse(parseResult.data, {
+                            delimiter: delimiter.value === '\\t' ? '\t' : delimiter.value,
+                            quotes: quoteStyle.value === 'all' || quoteStyle.value === 'nonnumeric',
+                            quoteChar: '"'
+                        });
+                }
+
+                csvOutput.innerHTML = formatted;
+                showSuccess();
+                updateStats(parseResult.data);
+                validateCSV(parseResult.data);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Generate HTML Table
+        function generateHTMLTable(data) {
+            if (!Array.isArray(data) || data.length === 0) return '';
+
+            const headers = Object.keys(data[0]);
+            let html = '<table class="table table-bordered table-hover">\n<thead>\n<tr>\n';
+            
+            // Headers
+            headers.forEach(header => {
+                html += `<th>${escapeHTML(header)}</th>\n`;
+            });
+            html += '</tr>\n</thead>\n<tbody>\n';
+
+            // Rows
+            data.forEach(row => {
+                html += '<tr>\n';
+                headers.forEach(header => {
+                    html += `<td>${escapeHTML(row[header])}</td>\n`;
+                });
+                html += '</tr>\n';
+            });
+
+            html += '</tbody>\n</table>';
+            return html;
+        }
+
+        // Generate Markdown Table
+        function generateMarkdownTable(data) {
+            if (!Array.isArray(data) || data.length === 0) return '';
+
+            const headers = Object.keys(data[0]);
+            let markdown = '| ' + headers.join(' | ') + ' |\n';
+            markdown += '|' + headers.map(() => '---').join('|') + '|\n';
+
+            data.forEach(row => {
+                markdown += '| ' + headers.map(header => row[header]).join(' | ') + ' |\n';
+            });
+
+            return markdown;
+        }
+
+        // Escape HTML
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Validate CSV
+        function validateCSV(data) {
+            try {
+                validationMessages.innerHTML = '';
+                const messages = [];
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    messages.push('No valid data found');
+                    return;
+                }
+
+                const headers = Object.keys(data[0]);
+                const rowLengths = new Set();
+
+                // Check consistency
+                data.forEach((row, index) => {
+                    rowLengths.add(Object.keys(row).length);
+                    
+                    // Check for empty values
+                    headers.forEach(header => {
+                        if (!row[header] && row[header] !== 0) {
+                            messages.push(`Empty value found in row ${index + 1}, column "${header}"`);
+                        }
+                    });
+                });
+
+                // Check row length consistency
+                if (rowLengths.size > 1) {
+                    messages.push('Inconsistent number of columns found');
+                }
+
+                // Display validation messages
+                if (messages.length > 0) {
+                    validationMessages.innerHTML = messages
+                        .map(message => `
+                            <div class="validation-warning">
+                                <i class="fas fa-exclamation-triangle"></i> ${message}
+                            </div>
+                        `)
+                        .join('');
+                    validationStatus.className = 'text-warning';
+                    validationStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Validation Issues';
+                }
+
+                return messages.length === 0;
+            } catch (error) {
+                showError(error.message);
+                return false;
+            }
+        }
+
+        // Preview data in table
+        function previewData() {
+            try {
+                const input = csvInput.value.trim();
+                if (!input) {
+                    showError('Please enter some CSV data');
+                    return;
+                }
+
+                const parseResult = Papa.parse(input, {
+                    delimiter: delimiter.value === '\\t' ? '\t' : delimiter.value,
+                    header: hasHeader.checked,
+                    skipEmptyLines: true
+                });
+
+                if (parseResult.errors.length > 0) {
+                    showError(parseResult.errors[0].message);
+                    return;
+                }
+
+                const table = generateHTMLTable(parseResult.data);
+                csvOutput.innerHTML = table;
+
+                // Initialize DataTable
+                if ($.fn.DataTable.isDataTable('#previewTable')) {
+                    $('#previewTable').DataTable().destroy();
+                }
+                $('#previewTable').DataTable({
+                    pageLength: 10,
+                    responsive: true
+                });
+
+                showSuccess();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Update CSV statistics
+        function updateStats(data) {
+            if (!Array.isArray(data) || data.length === 0) return;
+
+            const stats = {
+                rows: data.length,
+                columns: Object.keys(data[0]).length,
+                cells: data.length * Object.keys(data[0]).length,
+                size: new Blob([csvInput.value]).size
+            };
+            
+            csvStats.textContent = `Size: ${formatBytes(stats.size)} | Rows: ${stats.rows} | Columns: ${stats.columns} | Cells: ${stats.cells}`;
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = `Error: ${message}`;
+            validationStatus.className = 'text-danger';
+            validationStatus.innerHTML = '<i class="fas fa-times-circle"></i> Invalid CSV';
+            csvStats.textContent = '';
+        }
+
+        // Show success message
+        function showSuccess() {
+            errorMessage.style.display = 'none';
+            validationStatus.className = 'text-success';
+            validationStatus.innerHTML = '<i class="fas fa-check-circle"></i> Valid CSV';
+        }
+
+        // Update character count
+        function updateCharCount() {
+            charCount.textContent = csvInput.value.length;
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const content = csvOutput.innerHTML;
+            if (!content) {
+                showError('No content to copy');
+                return;
+            }
+
+            if (outputFormat.value === 'html') {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = content;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+            } else {
+                navigator.clipboard.writeText(content);
+            }
+
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            }, 2000);
+        }
+
+        // Download file
+        function downloadFile() {
+            const content = csvOutput.innerHTML;
+            if (!content) {
+                showError('No content to download');
+                return;
+            }
+
+            const extensions = {
+                csv: 'csv',
+                json: 'json',
+                html: 'html',
+                markdown: 'md'
+            };
+
+            const extension = extensions[outputFormat.value];
+            const blob = new Blob([content], { type: `text/${extension}` });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `formatted.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        formatBtn.addEventListener('click', formatCSV);
+        validateBtn.addEventListener('click', () => {
+            const input = csvInput.value.trim();
+            if (!input) {
+                showError('Please enter some CSV data');
+                return;
+            }
+            try {
+                const parseResult = Papa.parse(input, {
+                    delimiter: delimiter.value === '\\t' ? '\t' : delimiter.value,
+                    header: hasHeader.checked,
+                    skipEmptyLines: true
+                });
+                validateCSV(parseResult.data);
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        clearBtn.addEventListener('click', () => {
+            csvInput.value = '';
+            csvOutput.innerHTML = '';
+            validationMessages.innerHTML = '';
+            updateCharCount();
+            errorMessage.style.display = 'none';
+            csvStats.textContent = '';
+        });
+        copyBtn.addEventListener('click', copyToClipboard);
+        downloadBtn.addEventListener('click', downloadFile);
+        previewBtn.addEventListener('click', previewData);
+        sampleBtn.addEventListener('click', () => {
+            csvInput.value = sampleCSV;
+            updateCharCount();
+            formatCSV();
+        });
+        csvInput.addEventListener('input', updateCharCount);
+        [delimiter, outputFormat, quoteStyle, hasHeader].forEach(input => {
+            input.addEventListener('change', () => {
+                if (csvInput.value) {
+                    formatCSV();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
